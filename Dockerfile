@@ -4,8 +4,9 @@ FROM maven:3.9-eclipse-temurin-21-alpine AS build
 # 设置工作目录
 WORKDIR /app
 
-# 配置Maven使用阿里云镜像源（如果需要settings.xml的话）
-# COPY settings.xml /usr/share/maven/conf/settings.xml
+
+ # 配置Maven使用阿里云镜像源
+ COPY settings.xml /usr/share/maven/conf/settings.xml
 
 # 首先复制 pom.xml 文件，以利用 Docker 缓存层
 COPY pom.xml .
