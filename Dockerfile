@@ -1,15 +1,42 @@
-# Docker 镜像构建
-# 使用 Eclipse Temurin JRE 21 精简版作为基础镜像
+# 第一阶段：构建应用
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
+
+# 设置工作目录
+WORKDIR /app
+
+# 配置Maven使用阿里云镜像源（如果需要settings.xml的话）
+# COPY settings.xml /usr/share/maven/conf/settings.xml
+
+# 首先复制 pom.xml 文件，以利用 Docker 缓存层
+COPY pom.xml .
+
+# 复制 Maven 包装器文件
+COPY .mvn/ .mvn/
+COPY mvnw mvnw.cmd ./
+
+# 下载依赖项（可以利用Docker缓存层，提高构建速度）
+RUN ./mvnw dependency:go-offline -B
+
+# 复制源代码
+COPY src/ src/
+
+# 构建应用程序
+RUN ./mvnw package -DskipTests
+
+# 第二阶段：创建最终镜像
 FROM eclipse-temurin:21-jre-alpine
 
-# 复制jar包到容器中
-COPY ./target/swx-ai-agent-0.0.1-SNAPSHOT.jar /tmp/swx-ai-agent-0.0.1-SNAPSHOT.jar
+# 设置工作目录
+WORKDIR /app
 
-# 暴露端口（根据Spring Boot默认端口设置）
+# 创建目录 - 如果需要挂载数据卷
+RUN mkdir -p /app/logs /app/chatMemory
+
+# 从构建阶段复制构建好的jar文件
+COPY --from=build /app/target/*.jar app.jar
+
+# 暴露应用程序端口（根据Spring Boot项目通常是8080）
 EXPOSE 8123
 
-
-# 指定容器启动时运行的指令
-ENTRYPOINT ["java", "-jar", "/tmp/swx-ai-agent-0.0.1-SNAPSHOT.jar"]
-
-
+# 设置JVM参数和应用启动命令
+ENTRYPOINT ["java", "-Xms512m", "-Xmx1024m", "-jar", "app.jar"]
