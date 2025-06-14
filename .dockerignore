@@ -1,0 +1,44 @@
+# 版本控制相关
+.git/
+.gitignore
+.gitattributes
+
+# IDE相关
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Maven相关
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml
+
+# 源代码（只需要构建好的jar包）
+src/
+
+# 构建过程文件（除了最终的jar包）
+target/classes/
+target/test-classes/
+target/generated-sources/
+target/generated-test-sources/
+target/maven-archiver/
+target/maven-status/
+target/surefire-reports/
+target/*.original
+
+# 临时文件
+tmp/
+chatMemory/
+
+# 前端项目
+swx-ai-agent-fronend/
+
+# 文档
+HELP.md
+README.md
+*.md
+
+# 日志文件
+*.log 

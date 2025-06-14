@@ -1,0 +1,185 @@
+/* Minecraft主题全局样式 */
+:root {
+  --mc-green: #5cb85c;
+  --mc-blue: #4f94cd;
+  --mc-brown: #8b4513;
+  --mc-gray: #696969;
+  --mc-light-gray: #d3d3d3;
+  --mc-dark-gray: #2f2f2f;
+  --mc-yellow: #ffd700;
+  --mc-red: #dc143c;
+  --mc-white: #ffffff;
+  --mc-black: #000000;
+  
+  /* Minecraft像素字体 */
+  --mc-font: 'Courier New', 'Monaco', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--mc-font);
+  background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%);
+  min-height: 100vh;
+  color: var(--mc-dark-gray);
+}
+
+/* Minecraft风格按钮 */
+.mc-button {
+  background: linear-gradient(to bottom, #8b8b8b 0%, #666666 100%);
+  border: 2px outset #8b8b8b;
+  color: white;
+  font-family: var(--mc-font);
+  font-weight: bold;
+  text-shadow: 1px 1px 0px #000;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.mc-button:hover {
+  background: linear-gradient(to bottom, #a0a0a0 0%, #7a7a7a 100%);
+  border: 2px outset #a0a0a0;
+}
+
+.mc-button:active {
+  border: 2px inset #666666;
+}
+
+.mc-button.primary {
+  background: linear-gradient(to bottom, var(--mc-green) 0%, #4a934a 100%);
+  border: 2px outset var(--mc-green);
+}
+
+.mc-button.primary:hover {
+  background: linear-gradient(to bottom, #6bc46b 0%, #559955 100%);
+}
+
+/* Minecraft风格卡片 */
+.mc-card {
+  background: #f0f0f0;
+  border: 3px outset #c0c0c0;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+  margin: 10px;
+}
+
+/* Minecraft风格输入框 */
+.mc-input {
+  background: #ffffff;
+  border: 2px inset #c0c0c0;
+  font-family: var(--mc-font);
+  padding: 8px;
+}
+
+.mc-input:focus {
+  outline: none;
+  border: 2px inset var(--mc-blue);
+}
+
+/* Minecraft风格弹窗 */
+.mc-dialog .el-dialog {
+  background: #f0f0f0;
+  border: 3px outset #c0c0c0;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+  border-radius: 0;
+}
+
+.mc-dialog .el-dialog__header {
+  background: linear-gradient(to bottom, #8b8b8b 0%, #666666 100%);
+  border-bottom: 2px solid #2f2f2f;
+  padding: 16px 20px;
+  margin: 0;
+}
+
+.mc-dialog .el-dialog__title {
+  color: white;
+  font-family: var(--mc-font);
+  font-weight: bold;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.mc-dialog .el-dialog__headerbtn {
+  color: white;
+  font-size: 20px;
+}
+
+.mc-dialog .el-dialog__body {
+  padding: 20px;
+  font-family: var(--mc-font);
+}
+
+.mc-dialog .el-dialog__footer {
+  padding: 16px 20px;
+  background: #f5f5f5;
+  border-top: 2px solid #ddd;
+}
+
+/* 草方块风格容器 */
+.grass-block {
+  background: 
+    linear-gradient(to bottom, 
+      #5cb85c 0%, 
+      #5cb85c 20%, 
+      #8b4513 20%, 
+      #8b4513 100%
+    );
+  border: 2px solid #2f2f2f;
+  position: relative;
+}
+
+.grass-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.1) 2px,
+      rgba(0,0,0,0.1) 4px
+    );
+}
+
+/* 动画效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .mc-card {
+    margin: 5px;
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border: 1px solid #c0c0c0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b8b8b;
+  border: 1px outset #a0a0a0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+} 
