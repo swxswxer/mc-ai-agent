@@ -1,5 +1,5 @@
 # 第一阶段：构建应用
-FROM maven:3.8.6-eclipse-temurin-21-alpine AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 
 # 设置工作目录
 WORKDIR /app
@@ -13,15 +13,17 @@ COPY pom.xml .
 # 复制 Maven 包装器文件
 COPY .mvn/ .mvn/
 COPY mvnw mvnw.cmd ./
+# 设置 Maven 参数，确保使用全局 settings
+ENV MAVEN_OPTS="-Dmaven.repo.local=/root/.m2/repository"
 
-# 下载依赖项（可以利用Docker缓存层，提高构建速度）
-RUN ./mvnw dependency:go-offline -B
+# 下载依赖项（使用系统 Maven 确保 settings.xml 生效）
+RUN mvn dependency:go-offline -B -s /usr/share/maven/conf/settings.xml
 
 # 复制源代码
 COPY src/ src/
 
-# 构建应用程序
-RUN ./mvnw package -DskipTests
+# 构建应用程序（使用系统 Maven）
+RUN mvn package -DskipTests -s /usr/share/maven/conf/settings.xml
 
 # 第二阶段：创建最终镜像
 FROM eclipse-temurin:21-jre-alpine
