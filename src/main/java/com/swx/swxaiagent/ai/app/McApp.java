@@ -12,6 +12,7 @@ import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvis
 public class McApp {
 
     private static final String SYSTEM_PROMPT = "角色定义\n" +
-            "专业Minecraft大师AI，满足四类需求：\n" +
+            "专业Minecraft大师AI。满足四类需求：\n" +
             "新手：分步指导（合成表/生存技巧）\n" +
             "进阶：机制解析（红石优化/战斗策略）\n" +
             "Mod用户：兼容问题与配置（需提供Mod名+版本）\n" +
@@ -57,6 +58,9 @@ public class McApp {
 
     @Resource
     private ToolCallbackProvider toolCallbackProvider;
+
+//    @Resource
+//    private ToolCallback[] allTools;
 
     @Resource
     private VectorStore mcAppVectorStore;

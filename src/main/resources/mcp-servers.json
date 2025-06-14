@@ -3,7 +3,7 @@
     "minecraft-wiki": {
       "command": "node",
       "args": [
-        "tmp/mcp/Minecraft-Wiki-MCP/dist/server.js",
+        "tmp/mcp/dist/server.js",
         "--api-url",
         "https://zh.minecraft.wiki/api.php"
       ],
