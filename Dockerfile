@@ -1,6 +1,6 @@
 # Docker 镜像构建
-# 使用 OpenJDK 21 JRE 精简版作为基础镜像
-FROM openjdk:21-jre-slim
+# 使用 Eclipse Temurin JRE 21 精简版作为基础镜像
+FROM eclipse-temurin:21-jre-alpine
 
 # 复制jar包到容器中
 COPY ./target/swx-ai-agent-0.0.1-SNAPSHOT.jar /tmp/swx-ai-agent-0.0.1-SNAPSHOT.jar
