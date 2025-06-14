@@ -9,16 +9,7 @@
 .vscode/
 .DS_Store
 
-# Maven相关
-.mvn/
-mvnw
-mvnw.cmd
-pom.xml
-
-# 源代码（只需要构建好的jar包）
-src/
-
-# 构建过程文件（除了最终的jar包）
+# 构建产物（保留构建所需的原始文件）
 target/classes/
 target/test-classes/
 target/generated-sources/
@@ -41,4 +32,10 @@ README.md
 *.md
 
 # 日志文件
-*.log 
+*.log
+logs/
+
+# 其他不需要的文件
+
+Dockerfile
+.dockerignore 
