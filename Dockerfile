@@ -1,9 +1,8 @@
 # 第一阶段：构建应用
-FROM maven:3.9-eclipse-temurin-21-alpine AS build
+FROM maven:3.8.6-eclipse-temurin-21-alpine AS build
 
 # 设置工作目录
 WORKDIR /app
-
 
  # 配置Maven使用阿里云镜像源
  COPY settings.xml /usr/share/maven/conf/settings.xml
