@@ -6,6 +6,15 @@ export const userApi = {
     return api.post('/user/register', data)
   },
 
+  // 发送注册验证码
+  sendRegisterCode(email) {
+    return api.post('/user/register/seedMail', email, {
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    })
+  },
+
   // 用户登录
   login(data) {
     return api.post('/user/login', data)

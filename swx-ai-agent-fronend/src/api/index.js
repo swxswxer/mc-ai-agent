@@ -10,9 +10,20 @@ import {
   ERROR_TYPES 
 } from '../utils/errorHandler'
 
+// 根据环境获取API基础URL
+const getBaseURL = () => {
+  // 开发环境：使用代理到 localhost:8123
+  // 生产环境：使用相对路径，通过nginx代理
+  if (import.meta.env.DEV) {
+    return '/api' // 开发环境通过 vite proxy 代理到 localhost:8123
+  } else {
+    return '/api' // 生产环境通过 nginx 代理到后端服务器
+  }
+}
+
 // 创建axios实例
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: getBaseURL(),
   timeout: 30000,
   withCredentials: true // 支持携带cookie，用于session认证
 })

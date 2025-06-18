@@ -20,10 +20,14 @@ import com.swx.swxaiagent.web.service.AppCallLogService;
 import com.swx.swxaiagent.web.service.UserService;
 import com.swx.swxaiagent.web.service.UserSubscriptionService;
 import com.swx.swxaiagent.web.service.VipLevelService;
+import com.swx.swxaiagent.web.utils.EmailUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -49,6 +53,10 @@ public class UserController {
     private UserSubscriptionService userSubscriptionService;
     @Resource
     private VipLevelService vipLevelService;
+    @Resource
+    private EmailUtil emailUtil;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     // region 登录相关
 
@@ -63,15 +71,50 @@ public class UserController {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        String email = userRegisterRequest.getEmail();
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            return null;
+        //验证码
+        String verificationCode = userRegisterRequest.getVerificationCode();
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, email)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
         }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+
+        // 5. 验证码校验
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        String redisKey = email;
+        String storedCode = ops.get(redisKey);
+
+        if (storedCode == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "验证码已过期，请重新获取");
+        }
+        if (!storedCode.equals(verificationCode)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "验证码错误");
+        }
+
+        long result = userService.userRegister(userAccount, userPassword, checkPassword, email);
         return ResultUtils.success(result);
     }
+    /**
+     * 发送注册验证码
+     */
+    @PostMapping("/register/seedMail")
+    public BaseResponse<Boolean> seedMail(@RequestBody String email) {
+        boolean valid = emailUtil.isValid(email);
+        if (!valid) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "邮箱格式错误");
+        }
+        Boolean isSendEmail;
+        try {
+            isSendEmail = emailUtil.sendEmail(email);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR.getCode(), "发送邮件失败");
+        }
+        return ResultUtils.success(isSendEmail);
+    }
+
+
 
     /**
      * 用户登录

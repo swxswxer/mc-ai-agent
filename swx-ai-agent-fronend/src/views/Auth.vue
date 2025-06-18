@@ -73,6 +73,43 @@
                 prefix-icon="User"
               />
             </el-form-item>
+            
+            <el-form-item prop="email">
+              <el-input
+                v-model="registerForm.email"
+                placeholder="请输入邮箱地址"
+                size="large"
+                class="mc-input"
+                prefix-icon="Message"
+              />
+            </el-form-item>
+            
+            <el-form-item prop="verificationCode" class="verification-code-item">
+              <div class="verification-code-container">
+                <div class="verification-input-wrapper">
+                  <el-input
+                    v-model="registerForm.verificationCode"
+                    placeholder="请输入验证码"
+                    size="large"
+                    class="mc-input verification-input"
+                    prefix-icon="Key"
+                  />
+                </div>
+                <div class="send-code-btn-wrapper">
+                  <el-button
+                    type="primary"
+                    size="large"
+                    :disabled="countdown > 0 || !isValidEmail(registerForm.email)"
+                    :loading="sendingCode"
+                    @click="sendVerificationCode"
+                    class="send-code-btn"
+                  >
+                    {{ countdown > 0 ? `${countdown}s` : '发送验证码' }}
+                  </el-button>
+                </div>
+              </div>
+            </el-form-item>
+            
             <el-form-item prop="userPassword">
               <el-input
                 v-model="registerForm.userPassword"
@@ -133,12 +170,16 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import { userApi } from '../api/user'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userStore = useUserStore()
 
 const isLogin = ref(true)
 const loading = ref(false)
+const sendingCode = ref(false)
+const countdown = ref(0)
 const loginFormRef = ref(null)
 const registerFormRef = ref(null)
 
@@ -151,9 +192,17 @@ const loginForm = reactive({
 // 注册表单
 const registerForm = reactive({
   userAccount: '',
+  email: '',
+  verificationCode: '',
   userPassword: '',
   checkPassword: ''
 })
+
+// 邮箱格式验证
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
 
 // 登录表单验证规则
 const loginRules = {
@@ -179,9 +228,26 @@ const registerRules = {
       trigger: 'blur' 
     }
   ],
+  email: [
+    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+    { 
+      validator: (rule, value, callback) => {
+        if (!isValidEmail(value)) {
+          callback(new Error('请输入有效的邮箱地址'))
+        } else {
+          callback()
+        }
+      }, 
+      trigger: 'blur' 
+    }
+  ],
+  verificationCode: [
+    { required: true, message: '请输入验证码', trigger: 'blur' },
+    { len: 4, message: '验证码长度为6位', trigger: 'blur' }
+  ],
   userPassword: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度至少6位', trigger: 'blur' },
+    { min: 8, message: '密码长度至少8位', trigger: 'blur' },
     { max: 20, message: '密码长度不能超过20位', trigger: 'blur' }
   ],
   checkPassword: [
@@ -199,6 +265,41 @@ const registerRules = {
   ]
 }
 
+// 发送验证码
+const sendVerificationCode = async () => {
+  if (!registerForm.email || !isValidEmail(registerForm.email)) {
+    ElMessage.error('请输入有效的邮箱地址')
+    return
+  }
+
+  sendingCode.value = true
+  try {
+    const response = await userApi.sendRegisterCode(registerForm.email)
+    if (response.code === 0) {
+      ElMessage.success('验证码发送成功，请查收邮件')
+      startCountdown()
+    } else {
+      ElMessage.error(response.message || '发送验证码失败')
+    }
+  } catch (error) {
+    console.error('发送验证码失败:', error)
+    ElMessage.error('发送验证码失败，请稍后重试')
+  } finally {
+    sendingCode.value = false
+  }
+}
+
+// 开始倒计时
+const startCountdown = () => {
+  countdown.value = 60
+  const timer = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(timer)
+    }
+  }, 1000)
+}
+
 // 切换登录/注册模式
 const toggleMode = () => {
   isLogin.value = !isLogin.value
@@ -207,8 +308,15 @@ const toggleMode = () => {
     Object.assign(loginForm, { userAccount: '', userPassword: '' })
     loginFormRef.value?.clearValidate()
   } else {
-    Object.assign(registerForm, { userAccount: '', userPassword: '', checkPassword: '' })
+    Object.assign(registerForm, { 
+      userAccount: '', 
+      email: '', 
+      verificationCode: '', 
+      userPassword: '', 
+      checkPassword: '' 
+    })
     registerFormRef.value?.clearValidate()
+    countdown.value = 0
   }
 }
 
@@ -247,7 +355,14 @@ const handleRegister = async () => {
       // 预填充账号
       loginForm.userAccount = registerForm.userAccount
       // 清空注册表单
-      Object.assign(registerForm, { userAccount: '', userPassword: '', checkPassword: '' })
+      Object.assign(registerForm, { 
+        userAccount: '', 
+        email: '', 
+        verificationCode: '', 
+        userPassword: '', 
+        checkPassword: '' 
+      })
+      countdown.value = 0
     }
   } finally {
     loading.value = false
@@ -321,24 +436,80 @@ const handleRegister = async () => {
   margin-bottom: 24px;
 }
 
-.auth-form :deep(.el-input__wrapper) {
+.auth-form :deep(.el-form-item:not(.verification-code-item) .el-input__wrapper) {
   border-radius: 4px;
   border: 2px solid #ddd;
   box-shadow: none;
   transition: border-color 0.3s;
+  height: 48px !important;
 }
 
-.auth-form :deep(.el-input__wrapper:hover) {
+.auth-form :deep(.el-form-item:not(.verification-code-item) .el-input__wrapper:hover) {
   border-color: var(--mc-green);
 }
 
-.auth-form :deep(.el-input__wrapper.is-focus) {
+.auth-form :deep(.el-form-item:not(.verification-code-item) .el-input__wrapper.is-focus) {
   border-color: var(--mc-blue);
   box-shadow: 0 0 0 2px rgba(79, 148, 205, 0.2);
 }
 
 .auth-form :deep(.el-input__inner) {
   font-family: var(--mc-font);
+}
+
+.verification-code-container {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+.verification-input-wrapper {
+  flex: 1;
+}
+
+.verification-input-wrapper :deep(.el-input__wrapper) {
+  height: 48px !important;
+  border-radius: 4px;
+  border: 2px solid #ddd;
+  box-shadow: none;
+  transition: border-color 0.3s;
+}
+
+.verification-input-wrapper :deep(.el-input__wrapper:hover) {
+  border-color: var(--mc-green);
+}
+
+.verification-input-wrapper :deep(.el-input__wrapper.is-focus) {
+  border-color: var(--mc-blue);
+  box-shadow: 0 0 0 2px rgba(79, 148, 205, 0.2);
+}
+
+.send-code-btn-wrapper {
+  min-width: 120px;
+}
+
+.send-code-btn {
+  width: 100%;
+  height: 48px !important;
+  font-family: var(--mc-font);
+  font-weight: bold;
+  background-color: var(--mc-green) !important;
+  border-color: var(--mc-green) !important;
+  color: white !important;
+  padding: 0 15px !important;
+  border-radius: 4px;
+}
+
+.send-code-btn:hover:not(:disabled) {
+  background-color: #45a049 !important;
+  border-color: #45a049 !important;
+}
+
+.send-code-btn:disabled {
+  color: #999 !important;
+  background-color: #f5f5f5 !important;
+  border-color: #ddd !important;
 }
 
 .auth-footer {
@@ -368,6 +539,16 @@ const handleRegister = async () => {
   
   .auth-title {
     font-size: 1.5rem;
+  }
+  
+  .verification-code-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  
+  .send-code-btn-wrapper {
+    min-width: auto;
   }
 }
 </style> 

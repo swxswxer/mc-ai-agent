@@ -57,10 +57,10 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu class="mc-dropdown">
-                  <el-dropdown-item disabled class="user-detail">
-                    <div>{{ userStore.userInfo?.userName || userStore.userInfo?.userAccount }}</div>
-                    <div style="color: #999; font-size: 12px;">{{ userStore.userInfo?.email || '未设置邮箱' }}</div>
-                  </el-dropdown-item>
+<!--                  <el-dropdown-item disabled class="user-detail">-->
+<!--                    <div>{{ userStore.userInfo?.userName || userStore.userInfo?.userAccount }}</div>-->
+<!--                    <div style="color: #999; font-size: 12px;">{{ userStore.userInfo?.email || '未设置邮箱' }}</div>-->
+<!--                  </el-dropdown-item>-->
                   <el-dropdown-item divided command="profile">
                     <el-icon class="dropdown-menu-icon"><Setting /></el-icon>
                     个人中心

@@ -15,6 +15,7 @@ import com.swx.swxaiagent.web.model.vo.LoginUserVO;
 import com.swx.swxaiagent.web.model.vo.UserVO;
 import com.swx.swxaiagent.web.service.UserService;
 import com.swx.swxaiagent.web.service.UserSubscriptionService;
+import com.swx.swxaiagent.web.utils.EmailUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -43,14 +44,15 @@ import static com.swx.swxaiagent.web.constant.UserConstant.USER_LOGIN_STATE;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Resource
     private UserSubscriptionService userSubscriptionService;
-
+    @Resource
+    private EmailUtil emailUtil;
     /**
      * 盐值，混淆密码
      */
     public static final String SALT = "swx";
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(String userAccount, String userPassword, String checkPassword,String email) {
         // 1. 校验
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
@@ -65,13 +67,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!userPassword.equals(checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
+        //邮箱校验
+        if (!emailUtil.isValid(email)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱格式无效");
+        }
         synchronized (userAccount.intern()) {
             // 账户不能重复
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("userAccount", userAccount);
-            long count = this.baseMapper.selectCount(queryWrapper);
-            if (count > 0) {
+            QueryWrapper<User> queryWrapperAccount = new QueryWrapper<>();
+            queryWrapperAccount.eq("userAccount", userAccount);
+            long countAccount = this.baseMapper.selectCount(queryWrapperAccount);
+            if (countAccount > 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+            }
+            // 邮箱不能重复
+            QueryWrapper<User> queryWrapperEmail = new QueryWrapper<>();
+            queryWrapperEmail.eq("email", email);
+            long countEmail = this.baseMapper.selectCount(queryWrapperEmail);
+            if (countEmail > 0) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "邮箱已被注册了");
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -82,6 +95,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            user.setEmail(email);
             user.setUserRole(UserRoleEnum.USER.getValue());
             //设置用户会员等级为FREE
             user.setCurrentVipLevelId(Long.valueOf(VipLevelEnum.FREE.getValue()));
