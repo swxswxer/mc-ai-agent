@@ -237,8 +237,6 @@ const formatMessage = (content) => {
 
 // 发送消息
 const sendMessage = (text) => {
-  console.log('sendMessage 被调用，文本:', text)
-  console.log('当前SSE状态:', sseState.value)
   currentInput.value = text
   handleSendMessage()
 }
@@ -246,7 +244,6 @@ const sendMessage = (text) => {
 // 清理SSE连接
 const cleanupSSE = () => {
   if (sseState.value.connection) {
-    console.log('清理SSE连接:', sseState.value.connectionId)
     sseState.value.connection.onerror = null
     sseState.value.connection.onmessage = null
     sseState.value.connection.onopen = null
@@ -264,19 +261,16 @@ const handleSendMessage = () => {
   
   // 基础检查
   if (!message || isLoading.value) {
-    console.log('请求被阻止:', { message: !!message, isLoading: isLoading.value })
     return
   }
   
   // 如果有活跃的SSE连接，禁止新请求
   if (sseState.value.isActive) {
-    console.log('SSE连接活跃中，阻止新请求')
     return
   }
   
   // 检查是否是重复发送（相同消息在3秒内）
   if (message === sseState.value.lastMessage && (currentTime - sseState.value.lastMessageTime) < 3000) {
-    console.log('重复消息被阻止:', message, '时间差:', currentTime - sseState.value.lastMessageTime)
     return
   }
   
@@ -287,8 +281,6 @@ const handleSendMessage = () => {
   sseState.value.lastMessage = message
   sseState.value.lastMessageTime = currentTime
   sseState.value.isCompleted = false
-  
-  console.log('开始新的请求，消息:', message)
 
   // 添加用户消息
   messages.value.push({
@@ -332,33 +324,29 @@ const handleSendMessage = () => {
   sseState.value.connection.onmessage = (event) => {
     // 检查连接是否仍然有效
     if (!sseState.value.isActive || sseState.value.connectionId !== connectionId) {
-      console.log('忽略来自无效连接的消息')
       return
     }
-    try {
-      const data = event.data
-      console.log('收到SSE数据:', data) // 添加调试日志
-      
-      if (data === '[DONE]') {
-        // 流结束
-        sseState.value.isCompleted = true
-        messages.value[aiMessageIndex].loading = false
-        isLoading.value = false
-        console.log('SSE流完成')
+          try {
+        const data = event.data
         
-        // 清理连接
-        cleanupSSE()
-        
-        scrollToBottom()
-        return
-      }
+        if (data === '[DONE]') {
+          // 流结束
+          sseState.value.isCompleted = true
+          messages.value[aiMessageIndex].loading = false
+          isLoading.value = false
+          
+          // 清理连接
+          cleanupSSE()
+          
+          scrollToBottom()
+          return
+        }
 
-      // 累积消息内容
-      if (data && data.trim()) {
-        messages.value[aiMessageIndex].content += data
-        console.log('累积内容长度:', messages.value[aiMessageIndex].content.length) // 调试日志
-        scrollToBottom()
-      }
+        // 累积消息内容
+        if (data && data.trim()) {
+          messages.value[aiMessageIndex].content += data
+          scrollToBottom()
+        }
     } catch (error) {
       console.error('处理SSE消息错误:', error)
       
@@ -376,21 +364,16 @@ const handleSendMessage = () => {
   sseState.value.connection.onerror = (error) => {
     // 检查连接是否仍然有效
     if (!sseState.value.isActive || sseState.value.connectionId !== connectionId) {
-      console.log('忽略来自无效连接的错误')
       return
     }
     
-    console.log('SSE错误事件:', error, '连接状态:', sseState.value.connection.readyState) // 详细日志
-    
     // 如果已经完成，忽略错误
     if (sseState.value.isCompleted) {
-      console.log('SSE已完成，忽略关闭时的error事件')
       return
     }
     
     // 检查是否已经收到内容
     if (messages.value[aiMessageIndex].content && messages.value[aiMessageIndex].content.trim()) {
-      console.log('SSE流正常结束')
       messages.value[aiMessageIndex].loading = false
       isLoading.value = false
       sseState.value.isCompleted = true
@@ -400,18 +383,17 @@ const handleSendMessage = () => {
     
     // 真正的错误情况 - 没有收到内容的连接失败
     console.error('SSE连接失败:', error)
-    console.log('真正的连接错误，readyState:', sseState.value.connection?.readyState)
     messages.value[aiMessageIndex].loading = false
-    messages.value[aiMessageIndex].content = '抱歉，发生了错误，请稍后重试。检查控制台以获取更多信息。'
+    messages.value[aiMessageIndex].content = '抱歉，发生了错误，请稍后重试。'
     isLoading.value = false
     cleanupSSE()
-    ElMessage.error('连接失败，请检查网络连接和服务器配置')
+    ElMessage.error('连接失败，请检查网络连接')
   }
 
   sseState.value.connection.onopen = () => {
-    // 只有当前有效连接才记录
+    // 连接建立成功
     if (sseState.value.isActive && sseState.value.connectionId === connectionId) {
-      console.log('SSE连接已建立，ID:', connectionId, 'readyState:', sseState.value.connection.readyState)
+      console.log('SSE连接已建立')
     }
   }
 }

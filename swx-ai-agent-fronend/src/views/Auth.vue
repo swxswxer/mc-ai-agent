@@ -243,7 +243,7 @@ const registerRules = {
   ],
   verificationCode: [
     { required: true, message: '请输入验证码', trigger: 'blur' },
-    { len: 4, message: '验证码长度为6位', trigger: 'blur' }
+    { len: 4, message: '验证码长度为4位', trigger: 'blur' }
   ],
   userPassword: [
     { required: true, message: '请输入密码', trigger: 'blur' },

@@ -3,6 +3,7 @@
 // 错误码映射表
 export const ERROR_CODE_MAP = {
   // 权限相关 (401xx)
+  40100: '未登录',
   40101: '无权限',
   40102: '请先登录',
   40103: 'token已过期',
@@ -60,10 +61,10 @@ export const ERROR_CODE_MAP = {
 }
 
 // 需要跳转登录的错误码
-export const LOGIN_REQUIRED_CODES = [40102, 40103, 40105]
+export const LOGIN_REQUIRED_CODES = [40100, 40102, 40103, 40105]
 
 // 需要静默处理的错误码（不显示错误提示）
-export const SILENT_ERROR_CODES = []
+export const SILENT_ERROR_CODES = [40100, 40102, 40103, 40105]
 
 // 需要特殊处理的错误码
 export const SPECIAL_ERROR_CODES = {

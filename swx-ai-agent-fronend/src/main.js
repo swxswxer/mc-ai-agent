@@ -23,13 +23,4 @@ app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 
-// 应用启动后检查登录状态
-app.mount('#app')
-
-// 在应用挂载后检查登录状态
-nextTick(() => {
-  const userStore = useUserStore()
-  userStore.checkLoginStatus().catch(error => {
-    console.error('初始化登录状态检查失败:', error)
-  })
-}) 
+app.mount('#app') 
