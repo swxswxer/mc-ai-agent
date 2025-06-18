@@ -1,0 +1,103 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Docker 配置
+        DOCKER_IMAGE = 'mc-ai-agent-frontend'
+        DOCKER_TAG = "${BUILD_NUMBER}"
+        DOCKER_REGISTRY = 'your-registry.com'  // 修改为你的镜像仓库地址
+        
+        // 构建信息
+        BUILD_DATE = sh(script: "date -u +'%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()
+        VCS_REF = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                script {
+                    env.GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // 构建 Docker 镜像
+                    def image = docker.build(
+                        "${DOCKER_IMAGE}:${DOCKER_TAG}",
+                        "--build-arg BUILD_DATE=${BUILD_DATE} " +
+                        "--build-arg VCS_REF=${VCS_REF} " +
+                        "--build-arg NODE_ENV=production ."
+                    )
+                    
+                    // 添加 latest 标签
+                    sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                }
+            }
+        }
+        
+        stage('Test Image') {
+            steps {
+                script {
+                    // 测试镜像是否可以正常启动
+                    sh """
+                        docker run -d --name test-container-${BUILD_NUMBER} -p 8081:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        sleep 10
+                        curl -f http://localhost:8081/ || exit 1
+                        docker stop test-container-${BUILD_NUMBER}
+                        docker rm test-container-${BUILD_NUMBER}
+                    """
+                }
+            }
+        }
+        
+        stage('Push to Registry') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'docker-registry-credentials') {
+                        sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "docker tag ${DOCKER_IMAGE}:latest ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
+                        sh "docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    // 这里可以添加部署逻辑，比如更新 Kubernetes 部署
+                    echo "部署镜像 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // 示例：kubectl set image deployment/frontend-deployment frontend=${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            // 清理本地镜像
+            sh """
+                docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG} || true
+                docker rmi ${DOCKER_IMAGE}:latest || true
+                docker system prune -f
+            """
+        }
+        success {
+            echo '构建成功！'
+        }
+        failure {
+            echo '构建失败！'
+        }
+    }
+} 

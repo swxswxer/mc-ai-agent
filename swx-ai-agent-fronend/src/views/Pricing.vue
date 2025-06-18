@@ -126,13 +126,12 @@
         </div>
         <div class="card-footer">
           <el-button 
-            type="primary" 
-            class="mc-button primary subscribe-btn" 
+            type="primary"
+            class="mc-button primary subscribe-btn"
             size="large"
-            @click="subscribe(3)"
-            :loading="subscribing"
+            disabled
           >
-            {{ userStore.isLoggedIn ? '立即订阅' : '登录后订阅' }}
+            暂未开放
           </el-button>
         </div>
       </div>
@@ -227,12 +226,12 @@ const selectedPlan = reactive({
 const plans = {
   2: {
     name: 'PRO',
-    price: 29,
+    price: 9.9,
     features: ['基础CHAT 200次/月', '高级Minecraft知识问答', '优先响应速度', '邮件支持']
   },
   3: {
     name: 'ULTRA',
-    price: 59,
+    price: 19.9,
     features: ['基础CHAT 300次/月', 'MANUS智能体 100次/月', '专家级AI建议', '最高优先级', '1对1专属支持']
   }
 }

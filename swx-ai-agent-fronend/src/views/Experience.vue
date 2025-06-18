@@ -136,7 +136,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aiApi } from '../api/ai'
 import { ElMessage } from 'element-plus'
 import { 
@@ -153,7 +153,7 @@ const currentMode = ref('chat')
 // 模式选项
 const modeOptions = [
   { label: '智能对话', value: 'chat' },
-  { label: 'Manus智能体', value: 'agent' }
+  { label: 'Manus智能体（暂未开放）', value: 'agent', disabled: true }
 ]
 
 // 当前模式信息
@@ -428,6 +428,15 @@ const clearMessages = () => {
   sseState.value.lastMessage = ''
   sseState.value.lastMessageTime = 0
 }
+
+// 监视模式切换，防止切换到disabled的选项
+watch(currentMode, (newMode) => {
+  const option = modeOptions.find(opt => opt.value === newMode)
+  if (option && option.disabled) {
+    ElMessage.warning('该模式暂未开放')
+    currentMode.value = 'chat' // 强制切换回chat模式
+  }
+})
 
 // 组件销毁时清理
 onUnmounted(() => {
