@@ -337,6 +337,7 @@ const handleSendMessage = () => {
     }
     try {
       const data = event.data
+      console.log('收到SSE数据:', data) // 添加调试日志
       
       if (data === '[DONE]') {
         // 流结束
@@ -355,6 +356,7 @@ const handleSendMessage = () => {
       // 累积消息内容
       if (data && data.trim()) {
         messages.value[aiMessageIndex].content += data
+        console.log('累积内容长度:', messages.value[aiMessageIndex].content.length) // 调试日志
         scrollToBottom()
       }
     } catch (error) {
@@ -378,6 +380,8 @@ const handleSendMessage = () => {
       return
     }
     
+    console.log('SSE错误事件:', error, '连接状态:', sseState.value.connection.readyState) // 详细日志
+    
     // 如果已经完成，忽略错误
     if (sseState.value.isCompleted) {
       console.log('SSE已完成，忽略关闭时的error事件')
@@ -396,18 +400,18 @@ const handleSendMessage = () => {
     
     // 真正的错误情况 - 没有收到内容的连接失败
     console.error('SSE连接失败:', error)
-    console.log('真正的连接错误')
+    console.log('真正的连接错误，readyState:', sseState.value.connection?.readyState)
     messages.value[aiMessageIndex].loading = false
-    messages.value[aiMessageIndex].content = '抱歉，发生了错误，请稍后重试。'
+    messages.value[aiMessageIndex].content = '抱歉，发生了错误，请稍后重试。检查控制台以获取更多信息。'
     isLoading.value = false
     cleanupSSE()
-    ElMessage.error('连接失败，请检查网络连接')
+    ElMessage.error('连接失败，请检查网络连接和服务器配置')
   }
 
   sseState.value.connection.onopen = () => {
     // 只有当前有效连接才记录
     if (sseState.value.isActive && sseState.value.connectionId === connectionId) {
-      console.log('SSE连接已建立，ID:', connectionId)
+      console.log('SSE连接已建立，ID:', connectionId, 'readyState:', sseState.value.connection.readyState)
     }
   }
 }

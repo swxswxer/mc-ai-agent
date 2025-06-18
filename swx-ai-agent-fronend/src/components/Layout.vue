@@ -85,7 +85,7 @@
     <!-- 页脚 -->
     <footer class="footer">
       <div class="footer-content">
-        <p>&copy; 2024 Minecraft AI Assistant. 由 Vue3 + Spring Boot 构建</p>
+        <p>&copy; 2025 MCompanion </p>
       </div>
     </footer>
   </div>
