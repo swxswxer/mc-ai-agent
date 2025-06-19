@@ -4,7 +4,29 @@
       <div class="auth-card mc-card">
         <div class="auth-header">
           <div class="logo-section">
-            <img src="/grass-block-simple.svg" alt="草方块图标" class="logo-icon">
+            <svg width="80" height="80" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+              <defs>
+                <pattern id="authGrass" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="4" fill="#5CB85C"/>
+                  <rect x="0" y="0" width="1" height="1" fill="#4A994A"/>
+                  <rect x="2" y="1" width="1" height="1" fill="#6BC46B"/>
+                  <rect x="1" y="2" width="1" height="1" fill="#4A994A"/>
+                  <rect x="3" y="3" width="1" height="1" fill="#4A994A"/>
+                </pattern>
+                <pattern id="authDirt" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="4" fill="#8B4513"/>
+                  <rect x="1" y="0" width="1" height="1" fill="#A0522D"/>
+                  <rect x="0" y="2" width="1" height="1" fill="#654321"/>
+                  <rect x="3" y="1" width="1" height="1" fill="#A0522D"/>
+                  <rect x="2" y="3" width="1" height="1" fill="#654321"/>
+                </pattern>
+              </defs>
+              <g transform="translate(4, 4)">
+                <polygon points="0,8 12,2 24,8 12,14" fill="url(#authGrass)" stroke="#2F2F2F" stroke-width="1"/>
+                <polygon points="0,8 12,14 12,26 0,20" fill="url(#authDirt)" stroke="#2F2F2F" stroke-width="1"/>
+                <polygon points="12,14 24,8 24,20 12,26" fill="url(#authDirt)" stroke="#2F2F2F" stroke-width="1" opacity="0.7"/>
+              </g>
+            </svg>
             <span class="logo-text">MC AI</span>
             <h1 class="auth-title">
               {{ isLogin ? '用户登录' : '用户注册' }}

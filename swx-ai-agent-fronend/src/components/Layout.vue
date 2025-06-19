@@ -5,7 +5,29 @@
       <div class="nav-container">
         <!-- Logo区域 -->
         <div class="logo-section" @click="$router.push('/')">
-          <img src="/grass-block-simple.svg" alt="草方块图标" class="logo-icon">
+          <svg width="40" height="40" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+            <defs>
+              <pattern id="simpleGrass" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect width="4" height="4" fill="#5CB85C"/>
+                <rect x="0" y="0" width="1" height="1" fill="#4A994A"/>
+                <rect x="2" y="1" width="1" height="1" fill="#6BC46B"/>
+                <rect x="1" y="2" width="1" height="1" fill="#4A994A"/>
+                <rect x="3" y="3" width="1" height="1" fill="#4A994A"/>
+              </pattern>
+              <pattern id="simpleDirt" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect width="4" height="4" fill="#8B4513"/>
+                <rect x="1" y="0" width="1" height="1" fill="#A0522D"/>
+                <rect x="0" y="2" width="1" height="1" fill="#654321"/>
+                <rect x="3" y="1" width="1" height="1" fill="#A0522D"/>
+                <rect x="2" y="3" width="1" height="1" fill="#654321"/>
+              </pattern>
+            </defs>
+            <g transform="translate(4, 4)">
+              <polygon points="0,8 12,2 24,8 12,14" fill="url(#simpleGrass)" stroke="#2F2F2F" stroke-width="1"/>
+              <polygon points="0,8 12,14 12,26 0,20" fill="url(#simpleDirt)" stroke="#2F2F2F" stroke-width="1"/>
+              <polygon points="12,14 24,8 24,20 12,26" fill="url(#simpleDirt)" stroke="#2F2F2F" stroke-width="1" opacity="0.7"/>
+            </g>
+          </svg>
           <span class="logo-text">MCompanion</span>
         </div>
 
@@ -102,7 +124,29 @@
         <!-- 左侧网站信息 -->
         <div class="footer-section">
           <div class="footer-logo">
-            <img src="/grass-block-simple.svg" alt="草方块图标" class="logo-icon">
+            <svg width="40" height="40" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+              <defs>
+                <pattern id="footerGrass" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="4" fill="#5CB85C"/>
+                  <rect x="0" y="0" width="1" height="1" fill="#4A994A"/>
+                  <rect x="2" y="1" width="1" height="1" fill="#6BC46B"/>
+                  <rect x="1" y="2" width="1" height="1" fill="#4A994A"/>
+                  <rect x="3" y="3" width="1" height="1" fill="#4A994A"/>
+                </pattern>
+                <pattern id="footerDirt" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="4" fill="#8B4513"/>
+                  <rect x="1" y="0" width="1" height="1" fill="#A0522D"/>
+                  <rect x="0" y="2" width="1" height="1" fill="#654321"/>
+                  <rect x="3" y="1" width="1" height="1" fill="#A0522D"/>
+                  <rect x="2" y="3" width="1" height="1" fill="#654321"/>
+                </pattern>
+              </defs>
+              <g transform="translate(4, 4)">
+                <polygon points="0,8 12,2 24,8 12,14" fill="url(#footerGrass)" stroke="#2F2F2F" stroke-width="1"/>
+                <polygon points="0,8 12,14 12,26 0,20" fill="url(#footerDirt)" stroke="#2F2F2F" stroke-width="1"/>
+                <polygon points="12,14 24,8 24,20 12,26" fill="url(#footerDirt)" stroke="#2F2F2F" stroke-width="1" opacity="0.7"/>
+              </g>
+            </svg>
             <span class="footer-logo-text">MCompanion</span>
           </div>
           <p class="footer-description">
