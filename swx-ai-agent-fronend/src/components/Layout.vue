@@ -134,6 +134,11 @@
               </a>
             </li>
             <li>
+              <a href="#" @click.prevent="$router.push('/experience')" class="footer-link">
+                在线体验
+              </a>
+            </li>
+            <li>
               <a href="#" @click.prevent="scrollToFeatures" class="footer-link">
                 如何使用
               </a>
