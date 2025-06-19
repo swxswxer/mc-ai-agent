@@ -36,6 +36,20 @@
               <el-icon class="menu-icon"><PriceTag /></el-icon>
               <span>定价</span>
             </div>
+            <div 
+              class="nav-item" 
+              @click="openExternalLink('https://github.com/swxswxer/MCompanionMod')"
+            >
+              <el-icon class="menu-icon"><Download /></el-icon>
+              <span>下载</span>
+            </div>
+            <div 
+              class="nav-item" 
+              @click="openExternalLink('https://github.com/swxswxer/MCompanionMod/issues')"
+            >
+              <el-icon class="menu-icon"><Warning /></el-icon>
+              <span>问题反馈</span>
+            </div>
           </div>
         </nav>
 
@@ -84,8 +98,58 @@
 
     <!-- 页脚 -->
     <footer class="footer">
-      <div class="footer-content">
-        <p>&copy; 2025 MCompanion </p>
+      <div class="footer-container">
+        <!-- 左侧网站信息 -->
+        <div class="footer-section">
+          <div class="footer-logo">
+            <div class="grass-block logo-block"></div>
+            <span class="footer-logo-text">MCompanion</span>
+          </div>
+          <p class="footer-description">
+            专为Minecraft玩家打造的智能AI助手Mod，提升你的游戏体验
+          </p>
+          <div class="footer-contact">
+            <p>联系我们：QQ 3235765007</p>
+            <p>
+              <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank" class="beian-link">
+                粤ICP备2025431446号-1
+              </a>
+            </p>
+          </div>
+          <p class="copyright">&copy; 2025 MCompanion</p>
+        </div>
+
+        <!-- 资源栏目 -->
+        <div class="footer-section">
+          <h3 class="footer-title">资源</h3>
+          <ul class="footer-links">
+            <li>
+              <a href="https://github.com/swxswxer/MCompanionMod" target="_blank" class="footer-link">
+                Releases
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/swxswxer/MCompanionMod/issues" target="_blank" class="footer-link">
+                问题反馈
+              </a>
+            </li>
+            <li>
+              <a href="#" @click.prevent="scrollToFeatures" class="footer-link">
+                如何使用
+              </a>
+            </li>
+            <li>
+              <a href="#" @click.prevent="$router.push('/404')" class="footer-link">
+                用户协议
+              </a>
+            </li>
+            <li>
+              <a href="#" @click.prevent="$router.push('/404')" class="footer-link">
+                隐私协议
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
   </div>
@@ -94,7 +158,7 @@
 <script setup>
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router'
-import { House, ChatLineRound, PriceTag, User, ArrowDown, Setting, SwitchButton } from '@element-plus/icons-vue'
+import { House, ChatLineRound, PriceTag, User, ArrowDown, Setting, SwitchButton, Download, Warning } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -108,6 +172,30 @@ const handleUserAction = (command) => {
       userStore.logout()
       router.push('/')
       break
+  }
+}
+
+const openExternalLink = (url) => {
+  window.open(url, '_blank')
+}
+
+const scrollToFeatures = () => {
+  // 如果当前不在首页，先导航到首页
+  if (router.currentRoute.value.path !== '/') {
+    router.push('/').then(() => {
+      // 等待页面加载后再滚动
+      setTimeout(() => {
+        const featuresSection = document.querySelector('.features-section')
+        if (featuresSection) {
+          featuresSection.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    })
+  } else {
+    const featuresSection = document.querySelector('.features-section')
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 }
 </script>
@@ -270,17 +358,100 @@ const handleUserAction = (command) => {
 }
 
 .footer {
-  background: var(--mc-dark-gray);
-  color: white;
-  text-align: center;
-  padding: 20px;
+  background: #3d4147;
+  color: #e0e0e0;
+  padding: 40px 20px 20px;
   border-top: 3px solid #2f2f2f;
 }
 
-.footer-content {
+.footer-container {
   max-width: 1200px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 60px;
   font-family: var(--mc-font);
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.footer-logo-text {
+  color: white;
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.footer-description {
+  color: #b0b0b0;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.footer-contact {
+  margin-bottom: 20px;
+}
+
+.footer-contact p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #b0b0b0;
+}
+
+.beian-link {
+  color: #b0b0b0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.beian-link:hover {
+  color: var(--mc-yellow);
+}
+
+.copyright {
+  color: #888;
+  font-size: 14px;
+  margin-top: auto;
+}
+
+.footer-title {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  font-family: var(--mc-font);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-link {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  color: var(--mc-yellow);
 }
 
 @media (max-width: 768px) {
@@ -294,6 +465,16 @@ const handleUserAction = (command) => {
   
   .nav-menu {
     flex: none;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: left;
+  }
+  
+  .footer-logo {
+    justify-content: flex-start;
   }
 }
 

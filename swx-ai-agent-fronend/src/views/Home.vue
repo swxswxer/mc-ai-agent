@@ -10,10 +10,10 @@
               <span class="ai-text">MCompanion</span>
             </h1>
             <p class="hero-subtitle">
-              专为Minecraft玩家打造的智能AI助手平台
+              专为Minecraft玩家打造的智能AI助手Mod
             </p>
             <p class="hero-description">
-              通过先进的人工智能技术，为您提供游戏攻略、建筑指导、红石教程等全方位服务
+              通过先进的AI技术，为您提供游戏攻略、红石教程等全方位服务
             </p>
             <div class="hero-buttons">
               <el-button type="primary" size="large" @click="$router.push('/experience')" class="mc-button-green">
@@ -23,6 +23,10 @@
               <el-button size="large" @click="scrollToFeatures" class="mc-button-green">
                 <InfoFilled class="button-icon" />
                 了解更多
+              </el-button>
+              <el-button size="large" @click="openExternalLink('https://github.com/swxswxer/MCompanionMod')" class="mc-button-green">
+                <Download class="button-icon" />
+                立马下载
               </el-button>
             </div>
           </div>
@@ -113,7 +117,7 @@
               <div class="step-number">4</div>
               <div class="step-content">
                 <h3>开始使用</h3>
-                <p>享受智能AI助手带来的游戏体验提升</p>
+                <p>进入游戏按下绑定按键“-”享受你的新时代MC</p>
               </div>
             </div>
           </div>
@@ -164,12 +168,17 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '../stores/user'
+import { Download } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
 const featuresSection = ref(null)
 
 const scrollToFeatures = () => {
   featuresSection.value?.scrollIntoView({ behavior: 'smooth' })
+}
+
+const openExternalLink = (url) => {
+  window.open(url, '_blank')
 }
 </script>
 
@@ -184,7 +193,7 @@ const scrollToFeatures = () => {
 
 }
 .hero-section {
-  //background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%);
+  /* background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%); */
   padding: 80px 20px;
   min-height: 600px;
   display: flex;
@@ -300,8 +309,7 @@ const scrollToFeatures = () => {
 
 .features-section {
   padding: 80px 20px;
-
-  //background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%);
+  /* background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%); */
 }
 
 .features-grid {
@@ -351,7 +359,7 @@ const scrollToFeatures = () => {
 
 .process-section {
   padding: 80px 20px;
-  //background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%);
+  /* background: linear-gradient(135deg, #87ceeb 0%, #98fb98 50%, #f0e68c 100%); */
 }
 
 .process-timeline {
@@ -405,7 +413,7 @@ const scrollToFeatures = () => {
 
 .cta-section {
   padding: 80px 20px;
-  //background: linear-gradient(135deg, #98fb98 0%, #87ceeb 100%);
+  /* background: linear-gradient(135deg, #98fb98 0%, #87ceeb 100%); */
 }
 
 .cta-content {

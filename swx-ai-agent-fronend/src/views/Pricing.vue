@@ -30,7 +30,7 @@
             </li>
             <li class="feature-item">
               <el-icon class="feature-icon"><Check /></el-icon>
-              <span>社区支持</span>
+              <span>Mod支持</span>
             </li>
           </ul>
         </div>
@@ -71,10 +71,10 @@
               <el-icon class="feature-icon"><Check /></el-icon>
               <span>优先响应速度</span>
             </li>
-            <li class="feature-item">
+            <!-- <li class="feature-item">
               <el-icon class="feature-icon"><Check /></el-icon>
               <span>邮件支持</span>
-            </li>
+            </li> -->
           </ul>
         </div>
         <div class="card-footer">
@@ -163,7 +163,7 @@
         
         <div class="payment-method">
           <h5>支付方式：</h5>
-          <el-radio-group v-model="paymentMethod" class="payment-options">
+          <!-- <el-radio-group v-model="paymentMethod" class="payment-options">
             <el-radio label="wechat" class="payment-radio">
               <div class="payment-option">
                 <span class="payment-icon">💚</span>
@@ -176,7 +176,11 @@
                 <span>支付宝</span>
               </div>
             </el-radio>
-          </el-radio-group>
+          </el-radio-group> -->
+          <div class="payment-radio">
+                <div>暂时不支持快捷支付，非常抱歉</div>
+                <span>如有强烈需要，请联系我们：QQ3235765007</span>
+              </div>
         </div>
       </div>
 
@@ -188,6 +192,7 @@
             @click="confirmPayment" 
             :loading="paying"
             class="mc-button primary"
+            disabled
           >
             确认支付
           </el-button>
@@ -227,7 +232,7 @@ const plans = {
   2: {
     name: 'PRO',
     price: 9.9,
-    features: ['基础CHAT 200次/月', '高级Minecraft知识问答', '优先响应速度', '邮件支持']
+    features: ['基础CHAT 200次/月', '高级Minecraft知识问答', '优先响应速度']
   },
   3: {
     name: 'ULTRA',
