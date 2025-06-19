@@ -5,7 +5,7 @@
       <div class="nav-container">
         <!-- Logo区域 -->
         <div class="logo-section" @click="$router.push('/')">
-          <div class="grass-block logo-block"></div>
+          <img src="/grass-block-simple.svg" alt="草方块图标" class="logo-icon">
           <span class="logo-text">MCompanion</span>
         </div>
 
@@ -102,7 +102,7 @@
         <!-- 左侧网站信息 -->
         <div class="footer-section">
           <div class="footer-logo">
-            <div class="grass-block logo-block"></div>
+            <img src="/grass-block-simple.svg" alt="草方块图标" class="logo-icon">
             <span class="footer-logo-text">MCompanion</span>
           </div>
           <p class="footer-description">
@@ -242,13 +242,11 @@ const scrollToFeatures = () => {
   transform: scale(1.05);
 }
 
-.logo-block {
+.logo-icon {
   width: 40px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
+  display: block;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
 }
 
 .logo-text {

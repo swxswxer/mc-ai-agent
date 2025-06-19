@@ -4,9 +4,8 @@
       <div class="auth-card mc-card">
         <div class="auth-header">
           <div class="logo-section">
-            <div class="grass-block logo-block">
-              <span class="logo-text">MC AI</span>
-            </div>
+            <img src="/grass-block-simple.svg" alt="草方块图标" class="logo-icon">
+            <span class="logo-text">MC AI</span>
             <h1 class="auth-title">
               {{ isLogin ? '用户登录' : '用户注册' }}
             </h1>
@@ -404,13 +403,11 @@ const handleRegister = async () => {
   gap: 20px;
 }
 
-.logo-block {
+.logo-icon {
   width: 80px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
+  height: 80px;
+  display: block;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
 }
 
 .logo-text {
